@@ -15,6 +15,9 @@ BINARY_EQUALS = "binary equals"
 BINARY_NOT_EQUALS = "binary not equals"
 BINARY_SIMULTANEOUS = "binary simultaneous"
 
+# Global
+information = defaultdict(list)
+
 # Counts how many constraints each variable has
 def CountConstraints(information):
 	varConstraints = {}
@@ -37,9 +40,40 @@ def CountConstraints(information):
 
 	return varConstraints
 
+# Helper function to check if we have a solution
+def CheckSolution(solution):
+	# TODO: check if solution has ALL variables + constraints met + bags are okay and stuff
+	return False
+
+# Checks the variable and see if it satisfies the constraints
+def CheckConstraints(var, bag):
+	# TODO: Check if you put a variable in a bag that constraints are okay
+	return 1
+
+# Helper function to check if variable solved already
+def InSolution(var, solution):
+	for data in solution:
+		if var in data:
+			return True
+	return False
+
+# Back tracking search algorithm
+def BacktrackingSearch(information, variables, solution):
+	if(CheckSolution(solution)):
+		return solution
+	else:
+		for var in variables:
+			if InSolution(var[0], solution):
+				# Variable already solved, move on to next
+				continue
+			else:
+				for bag in solution:
+					if(CheckConstraints(var, bag))
+					# TODO: etc etc
+
 def CSP(filename):
+	global information
 	fp = open(filename, "r")
-	information = defaultdict(list)
 
 	# Parses through input file and splits data into different sections
 	for data in fp:
@@ -68,11 +102,12 @@ def CSP(filename):
 	
 	varConstraints = CountConstraints(information)
 	varConstraints = sorted(varConstraints.items(), key = itemgetter(1))[::-1]
-	
-	print (information[VARIABLES])
-	print (information[VALUE])
-	print (information)
-	print varConstraints
+
+	# print (information[VARIABLES])
+	# print (information[VALUE])
+	# print (information)
+	# print varConstraints
+	solution = BacktrackingSearch(information, varConstraints, information[VALUE])
 
 if __name__ == '__main__':
 	if len(sys.argv) == 2:
