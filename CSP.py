@@ -14,6 +14,28 @@ BINARY_EQUALS = "binary equals"
 BINARY_NOT_EQUALS = "binary not equals"
 BINARY_SIMULTANEOUS = "binary simultaneous"
 
+# Counts how many constraints each variable has
+def CountConstraints(information):
+	varConstraints = {}
+	
+	for variable in information[VARIABLES]:
+		# Add value to dictionary
+		if variable[0] not in varConstraints:
+			varConstraints[variable[0]] = 0
+
+		# Counts unary inclusive constraints
+		varConstraints[variable[0]] += sum(var.count(variable[0]) for var in information[UNARY_INCLUSIVE])
+		# Counts unary exclusive constraints
+		varConstraints[variable[0]] += sum(var.count(variable[0]) for var in information[UNARY_EXCLUSIVE])
+		# Counts binary equals constraints
+		varConstraints[variable[0]] += sum(var.count(variable[0]) for var in information[BINARY_EQUALS])
+		# Counts binary not equals constraints
+		varConstraints[variable[0]] += sum(var.count(variable[0]) for var in information[BINARY_NOT_EQUALS])
+		# Counts binary simultaneous constraints
+		varConstraints[variable[0]] += sum(var.count(variable[0]) for var in information[BINARY_SIMULTANEOUS])
+
+	return varConstraints
+
 def CSP(filename):
 	fp = open(filename, "r")
 	information = defaultdict(list)
@@ -28,7 +50,6 @@ def CSP(filename):
 				information[key].remove(" ")
 			information[key].append(data.rstrip().split(" "))
 
-	#print (information)
 	variables = zip(*information[VARIABLES])
 	variables = list(variables)
 	varNames = variables[0]
@@ -44,15 +65,12 @@ def CSP(filename):
 		minFit = information[FITTING_LIMITS][0][0]
 		maxFit = information[FITTING_LIMITS][0][1]
 	
-
-
-	print (information[VARIABLES])
-	print (information[VALUE])
+	varConstraints = CountConstraints(information)
+	
+	# print (information[VARIABLES])
+	# print (information[VALUE])
 	print (information)
-
-
-
-
+	print varConstraints
 
 if __name__ == '__main__':
 	if len(sys.argv) == 2:
