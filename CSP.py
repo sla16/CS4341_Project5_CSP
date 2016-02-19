@@ -43,9 +43,18 @@ def CountConstraints(information):
 	return varConstraints
 
 # Helper function to check if we have a solution
-def CheckSolution(solution):
+def CheckSolution(solution, numVar, minFit):
 	# TODO: check if solution has ALL variables + constraints met + bags are okay and stuff
-	return False
+	countOfVar = 0
+	# Count number of variables (to make sure all variables are used)
+	for bag in solution:
+		countOfVar += (len(bag) - 2)
+	if numVar != countOfVar:
+		return False
+
+
+
+	return True
 
 # Checks the variable and see if it satisfies the constraints
 def CheckConstraints(var, var_weight, bag, maxFit):
@@ -83,11 +92,11 @@ def GetVarWeight(var, var_info):
 
 # Back tracking search algorithm
 def BacktrackingSearch(variables, var_info, solution, minFit, maxFit):
-	print variables
-	print var_info
-	print solution
+	# print variables
+	# print var_info
+	# print solution
 
-	if(CheckSolution(solution)):
+	if(CheckSolution(solution, len(variables), minFit)):
 		return solution
 	else:
 		for var in variables:
@@ -100,6 +109,7 @@ def BacktrackingSearch(variables, var_info, solution, minFit, maxFit):
 					if(CheckConstraints(var, var_weight, bag, maxFit)):
 						# Variable fits the constraints, put it into the bag
 						bag.append(var)
+						bag[1] = (int(bag[1]) - int(var_weight))
 						updatedSolution = BacktrackingSearch(variables, var_info, solution, minFit, maxFit)
 						if updatedSolution is not None:
 							return updatedSolution
@@ -143,6 +153,7 @@ def CSP(filename):
 	# print (information[VALUE])
 	# print (information)
 	solution = BacktrackingSearch(varConstraints[0], variables, information[VALUE], minFit, maxFit)
+	print solution
 
 if __name__ == '__main__':
 	if len(sys.argv) == 2:
