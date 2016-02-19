@@ -20,7 +20,7 @@ information = defaultdict(list)
 
 # Counts how many constraints each variable has
 def CountConstraints(information):
-	varConstraints = {}
+	varConstraints = defaultdict(list)
 	
 	for variable in information[VARIABLES]:
 		# Add value to dictionary
@@ -38,6 +38,8 @@ def CountConstraints(information):
 		# Counts binary simultaneous constraints
 		varConstraints[variable[0]] += sum(var.count(variable[0]) for var in information[BINARY_SIMULTANEOUS])
 
+		varConstraints[variable[0]]
+
 	return varConstraints
 
 # Helper function to check if we have a solution
@@ -46,9 +48,27 @@ def CheckSolution(solution):
 	return False
 
 # Checks the variable and see if it satisfies the constraints
-def CheckConstraints(var, bag):
-	# TODO: Check if you put a variable in a bag that constraints are okay
-	return 1
+def CheckConstraints(var, var_weight, bag, maxFit):
+	tempBag = list(bag)
+	tempBag.append(var)
+	tempBag[1] = (int(tempBag[1]) - int(var_weight))
+
+	# If number of items in bag violates max fit, wrong bag
+	if (2 - len(tempBag)) > maxFit:
+		return False
+	# If capacity exceeded, wrong bag
+	if tempBag[1] < 0:
+		return False
+	# Check what bag the variable MUST belong to, if it has this constraint
+	for constraints in information[UNARY_INCLUSIVE]:
+		if var in constraints and bag not in constraints:
+			return False
+	# Check what bag the variable MUST NOT belong to, if it has this constraint
+	for constraints in information[UNARY_EXCLUSIVE]:
+		if var in constraints and bag in constraints:
+			return False
+	# TODO: binary equals, binary not equals, binary simultaneous/mutual inclusive
+	return True
 
 # Helper function to check if variable solved already
 def InSolution(var, solution):
@@ -57,19 +77,35 @@ def InSolution(var, solution):
 			return True
 	return False
 
+# Helper function to map a variable to its value
+def GetVarWeight(var, var_info):
+	return var_info[1][var_info[0].index(var)]
+
 # Back tracking search algorithm
-def BacktrackingSearch(information, variables, solution):
+def BacktrackingSearch(variables, var_info, solution, minFit, maxFit):
+	print variables
+	print var_info
+	print solution
+
 	if(CheckSolution(solution)):
 		return solution
 	else:
 		for var in variables:
-			if InSolution(var[0], solution):
+			if InSolution(var, solution):
 				# Variable already solved, move on to next
 				continue
 			else:
 				for bag in solution:
-					if(CheckConstraints(var, bag))
-					# TODO: etc etc
+					var_weight = GetVarWeight(var, var_info)
+					if(CheckConstraints(var, var_weight, bag, maxFit)):
+						# Variable fits the constraints, put it into the bag
+						bag.append(var)
+						updatedSolution = BacktrackingSearch(variables, var_info, solution, minFit, maxFit)
+						if updatedSolution is not None:
+							return updatedSolution
+						else:
+							del bag[-1]
+				return None
 
 def CSP(filename):
 	global information
@@ -88,7 +124,7 @@ def CSP(filename):
 	variables = zip(*information[VARIABLES])
 	variables = list(variables)
 	varNames = variables[0]
-	varWieghts = variables[1]
+	varWeights = variables[1]
 	bags = zip(*information[VALUE])
 	bags = list(bags)
 	bagNames = bags[0]
@@ -102,12 +138,11 @@ def CSP(filename):
 	
 	varConstraints = CountConstraints(information)
 	varConstraints = sorted(varConstraints.items(), key = itemgetter(1))[::-1]
+	varConstraints = zip(*varConstraints)
 
-	# print (information[VARIABLES])
 	# print (information[VALUE])
 	# print (information)
-	# print varConstraints
-	solution = BacktrackingSearch(information, varConstraints, information[VALUE])
+	solution = BacktrackingSearch(varConstraints[0], variables, information[VALUE], minFit, maxFit)
 
 if __name__ == '__main__':
 	if len(sys.argv) == 2:
