@@ -22,35 +22,33 @@ def CSP(filename):
 	for data in fp:
 		if CONST_DELIMITER in data:
 			key = data.split(CONST_DELIMITER)[1].rstrip()
+			information[key].append(" ")
 		else:
+			if information[key].count(" "):
+				information[key].remove(" ")
 			information[key].append(data.rstrip().split(" "))
 
-	variables = zip(*information["variables"])
+	#print (information)
+	variables = zip(*information[VARIABLES])
 	variables = list(variables)
 	varNames = variables[0]
 	varWieghts = variables[1]
-	bags = zip(*information["values"])
+	bags = zip(*information[VALUE])
 	bags = list(bags)
 	bagNames = bags[0]
 	bagCapacity = bags[1]
-	print (information["fitting limits"])
-	#if information["fitting limits"]
-		#minFit = 0
-		#maxFit = 1000
-	#else
-		#minFit = information["fitting limits"][0][0]
-		#maxFit = information["fitting limits"][0][1]
+	if(information[FITTING_LIMITS].count(" ")):
+		minFit = 0
+		maxFit = 100
+	else:
+		minFit = information[FITTING_LIMITS][0][0]
+		maxFit = information[FITTING_LIMITS][0][1]
+	
 
 
-	print (information["variables"])
-	print (varNames)
-	print (varWieghts)
-	print (information["values"])
-	print (bagNames)
-	print (bagCapacity)
-	print (minFit)
-	print (maxFit)
-
+	print (information[VARIABLES])
+	print (information[VALUE])
+	print (information)
 
 
 
