@@ -1,6 +1,7 @@
 # Python version: 2.7
 
 from collections import defaultdict
+from operator import itemgetter
 import sys
 
 # Constants
@@ -66,9 +67,10 @@ def CSP(filename):
 		maxFit = information[FITTING_LIMITS][0][1]
 	
 	varConstraints = CountConstraints(information)
+	varConstraints = sorted(varConstraints.items(), key = itemgetter(1))[::-1]
 	
-	# print (information[VARIABLES])
-	# print (information[VALUE])
+	print (information[VARIABLES])
+	print (information[VALUE])
 	print (information)
 	print varConstraints
 
