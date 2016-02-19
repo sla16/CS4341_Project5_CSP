@@ -11,7 +11,7 @@ FITTING_LIMITS = "fitting limits"
 UNARY_INCLUSIVE = "unary inclusive"
 UNARY_EXCLUSIVE = "unary exclusive"
 BINARY_EQUALS = "binary equals"
-BINARY_NOT_EQUALS = "binary nont equals"
+BINARY_NOT_EQUALS = "binary not equals"
 BINARY_SIMULTANEOUS = "binary simultaneous"
 
 def CSP(filename):
@@ -24,7 +24,37 @@ def CSP(filename):
 			key = data.split(CONST_DELIMITER)[1].rstrip()
 		else:
 			information[key].append(data.rstrip().split(" "))
-	# print information
+
+	variables = zip(*information["variables"])
+	variables = list(variables)
+	varNames = variables[0]
+	varWieghts = variables[1]
+	bags = zip(*information["values"])
+	bags = list(bags)
+	bagNames = bags[0]
+	bagCapacity = bags[1]
+	print (information["fitting limits"])
+	#if information["fitting limits"]
+		#minFit = 0
+		#maxFit = 1000
+	#else
+		#minFit = information["fitting limits"][0][0]
+		#maxFit = information["fitting limits"][0][1]
+
+
+	print (information["variables"])
+	print (varNames)
+	print (varWieghts)
+	print (information["values"])
+	print (bagNames)
+	print (bagCapacity)
+	print (minFit)
+	print (maxFit)
+
+
+
+
+
 
 if __name__ == '__main__':
 	if len(sys.argv) == 2:
