@@ -80,9 +80,13 @@ def CheckConstraints(var, var_weight, bag, maxFit, solution):
 	for constraints in information[BINARY_EQUALS]:
 		if var in constraints and ConstraintInSolution(constraints, solution):
 			if bag[0] != ConstraintBag(constraints, solution):
-				return false
-
-	# TODO: binary equals, binary not equals, binary simultaneous/mutual inclusive
+				return False
+	# Check binary not equals constraint
+	for constraints in information[BINARY_NOT_EQUALS]:
+		if var in constraints and ConstraintInSolution(constraints, solution):
+			if bag[0] == ConstraintBag(constraints, solution):
+				return False
+	# TODO: binary simultaneous/mutual inclusive
 	return True
 
 # Helper function to check if variable solved already
